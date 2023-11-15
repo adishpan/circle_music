@@ -1,0 +1,68 @@
+<!-- going to be stealing heavily from class scripts to make the thing actually play notes -->
+
+<!-- import libraries -->
+<script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js"></script>
+<script src="https://tonejs.github.io/build/Tone.js"></script>
+
+<script>
+/* global nn, Tone */
+
+let instrument = null
+let synth = null
+// PolySynth (vs Synth) can trigger multiple notes at once
+if(instrument !== null){
+  synth = new Tone.PolySynth(instrument).toDestination()
+  }
+  else{
+  synth = new Tone.PolySynth().toDestination()
+  }
+
+const scale_types = {
+  Major: [ 0, 2, 4, 5, 7, 9, 11 ],
+  Minor: [ 0, 2, 3, 5, 7, 8, 10 ],
+  Melodic: [ 0, 2, 3, 5, 7, 9, 11 ],
+  Harmonic: [ 0, 2, 3, 5, 7, 8, 11 ]
+}
+  
+const scale_notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+  
+let scale = scales.Cmajor
+// this object (or "dictionary") keeps track of our key states
+const keyMap = {
+  a: { note: scale[0], pressed: false },
+//  w: { note: scale[0], pressed: false },
+  s: { note: scale[1], pressed: false },
+//  e: { note: scale[0], pressed: false },
+  d: { note: scale[2], pressed: false },
+  f: { note: scale[3], pressed: false },
+//  t: { note: scale[0], pressed: false },
+  g: { note: scale[4], pressed: false },
+//  y: { note: scale[0], pressed: false },
+  h: { note: scale[5], pressed: false },
+//  u: { note: scale[0], pressed: false },
+  j: { note: scale[6], pressed: false },
+  k: { note: scale[7], pressed: false }
+}
+
+
+function press (e) {  
+  const obj = keyMap[e.key]
+  if (obj && !obj.pressed) {
+    synth.triggerAttack(obj.note)
+    obj.pressed = true
+  }
+}
+  
+function release (e) {
+	const obj = keyMap[e.key]
+  if (obj && obj.pressed) {
+    synth.triggerRelease(obj.note)
+    obj.pressed = false
+  }
+}
+
+// events listeners
+nn.on('keydown', press)
+nn.on('keyup', release)
+
+</script>
